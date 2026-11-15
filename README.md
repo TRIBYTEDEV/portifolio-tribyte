@@ -4,41 +4,35 @@
 
 # TRIBYTE
 
-Somos Gustavo, Márcio e Lucas, estudantes de Desenvolvimento de Sistemas no SENAI. Aqui apresentamos nossos projetos, o que estamos desenvolvendo e os tipos de trabalho que podemos construir com você.
+Somos uma equipe de estudantes de Desenvolvimento de Sistemas no SENAI. Este portfólio reúne os projetos que fizemos juntos, os estudos de interface e os trabalhos que ainda estamos desenvolvendo.
 
-[Conhecer o portfólio](https://portifolio-tribyte.vercel.app/) · [Explorar os projetos](#projetos)
-
-![Identidade visual da TRIBYTE](assets/og-tribyte.png)
+[Acessar o portfólio](https://portifolio-tribyte.vercel.app/) · [Ver os projetos](#projetos)
 
 ## Projetos
 
-| Projeto | O que é | Estágio |
-| --- | --- | --- |
-| [SENAI Smart Class](https://senai-smart-class-one.vercel.app/) | Painel para acompanhar sensores e controlar equipamentos de uma sala. | Projeto acadêmico desenvolvido em equipe, com demonstração disponível. |
-| **Painel comercial** | Proposta visual para acompanhar vendas e metas. | Conceito de interface com dados fictícios. |
-| **Vio Finanças** | Projeto pessoal de Márcio Andrey para organização financeira. | Em desenvolvimento, ainda sem demonstração pública. |
-| **Portfólio TRIBYTE** | Nosso site de apresentação, com trabalhos, perfis e contato. | Projeto da equipe. |
+| Trabalho | Sobre o projeto |
+| --- | --- |
+| [SENAI Smart Class](https://senai-smart-class-one.vercel.app/) | Projeto acadêmico feito em equipe: um painel para acompanhar sensores e controlar equipamentos de uma sala. A demonstração usa leituras simuladas quando o hardware está desconectado. |
+| Painel comercial | Estudo visual de um painel de vendas e metas. Os dados apresentados são fictícios. |
+| Vio Finanças | Projeto pessoal de Márcio Andrey para organização financeira. Está em desenvolvimento e ainda não tem demonstração pública. |
+| Portfólio TRIBYTE | O site da equipe, com nossos trabalhos, perfis e formas de contato. |
 
-No Smart Class, as leituras são simuladas quando o hardware não está conectado. Cada trabalho é apresentado no portfólio com seu contexto e estágio de desenvolvimento.
-
-## O que podemos criar
-
-- **Sites institucionais e portfólios:** para apresentar um negócio, seus serviços ou seus trabalhos.
-- **Sistemas web:** painéis, cadastros e áreas de gestão para organizar informações e tarefas.
-- **Landing pages:** páginas voltadas a um produto, serviço ou campanha.
-
-[Conheça os tipos de projeto no site](https://portifolio-tribyte.vercel.app/#servicos).
-
-## Nossa equipe
+## Equipe
 
 - [Gustavo de Brito Vieira](https://github.com/GustavobritoTDS)
 - Márcio Andrey
 - [Lucas Duarte Costa](https://github.com/lucasduartecosta09)
 
-No portfólio, você encontra a apresentação e os interesses de cada integrante.
+[Conheça cada integrante no portfólio](https://portifolio-tribyte.vercel.app/#estudio).
 
-## Conte sua ideia
+## Sites e sistemas
 
-Conte o que você precisa apresentar ou organizar. Pelo site, você pode chamar a equipe no WhatsApp ou preparar uma mensagem com os detalhes do projeto para revisar antes de enviar.
+Podemos desenvolver um site para apresentar seu negócio, um sistema para organizar informações da equipe ou uma página para divulgar um produto ou uma campanha.
 
-[Conversar sobre um projeto](https://portifolio-tribyte.vercel.app/#contato)
+[Veja os tipos de projeto](https://portifolio-tribyte.vercel.app/#servicos).
+
+## Contato
+
+Conte o que você precisa na área de contato do site. Você pode chamar a equipe no WhatsApp ou preparar uma mensagem com os detalhes do projeto e revisá-la antes de enviar.
+
+[Conversar com a TRIBYTE](https://portifolio-tribyte.vercel.app/#contato)
