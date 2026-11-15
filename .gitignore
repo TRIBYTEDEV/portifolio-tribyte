@@ -1,6 +1,7 @@
 # Publicação mínima: ignorar tudo que não estiver nesta lista.
 *
 !/.gitignore
+!/README.md
 !/index.html
 !/robots.txt
 !/script.js
