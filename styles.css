@@ -2949,9 +2949,6 @@ dialog[open] {
   }
   .studio-story {
     margin-top: 30px;
-    display: grid;
-    grid-template-columns: 40px 1fr;
-    gap: 0 16px;
   }
   .studio-story p {
     font-size: 12px;
@@ -3559,12 +3556,33 @@ dialog[open] {
   white-space: normal;
   pointer-events: none;
 }
+.tb-hero-stage > .tb-hero-github {
+  position: absolute;
+  top: calc(100% + 38px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 4px;
+  color: #b9b3af; /* painel do monograma é escuro nos dois temas */
+  font: 11px/1.5 var(--mono);
+  letter-spacing: .04em;
+  text-decoration: none;
+  white-space: nowrap;
+  pointer-events: auto;
+  transition: color .3s, text-shadow .3s;
+}
+.tb-hero-stage > .tb-hero-github:is(:hover, :focus-visible) {
+  color: var(--rx-red);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--rx-red) 60%, transparent);
+}
 @media (max-width: 800px) {
   .tb-hero-art .tb-hero-stage {
     width: min(82%, 340px);
     top: 3%;
     right: 3%;
   }
+  /* Espaço para legenda e link do GitHub dentro do painel. */
+  .hero .tb-hero-art .tb-hero-stage { width: 82%; top: 4%; right: 9%; }
+  .tb-hero-stage > .tb-hero-github { top: calc(100% + 30px); padding: 4px; }
 }
 @media (max-width: 540px) {
   .tb-hero-art .tb-hero-stage {
@@ -5369,6 +5387,10 @@ h2 {letter-spacing:-.075em}
   filter: blur(26px);
   pointer-events: none;
   animation: rb-ambient-pulse 12s ease-in-out infinite alternate;
+}
+/* !important: vence os atalhos `animation:` declarados nas camadas acima. */
+.hero.is-paused, .hero.is-paused *, .hero.is-paused *::before, .hero.is-paused *::after {
+  animation-play-state: paused !important;
 }
 @keyframes rb-ambient-pulse {
   from { opacity: .5; transform: scale(.94); }

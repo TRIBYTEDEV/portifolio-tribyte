@@ -217,7 +217,8 @@ runSection(function initOpening() {
   const root = document.getElementById("brand-intro");
   if (root && document.documentElement.classList.contains("tb-intro-on")) {
     Promise.all([loadGsap(), loadIntroStyles()]).then(([, stylesLoaded]) => {
-      if (!stylesLoaded) {
+      // site-init.js já liberou a página se os recursos demoraram demais.
+      if (!stylesLoaded || !document.documentElement.classList.contains("tb-intro-on")) {
         document.documentElement.classList.remove("tb-intro-on");
         root.hidden = true;
         return;
@@ -552,7 +553,10 @@ const messageField = $("#message");
 $$("[data-service]").forEach((link) =>
   link.addEventListener("click", () => {
     $("#service").value = link.dataset.service;
-    if (!messageField.value.trim()) messageField.value = SERVICE_OPENERS[link.dataset.service] || "";
+    // Troca a sugestão só se o visitante ainda não escreveu nada além dela.
+    const current = messageField.value.trim();
+    if (!current || Object.values(SERVICE_OPENERS).some((opener) => opener.trim() === current))
+      messageField.value = SERVICE_OPENERS[link.dataset.service] || "";
     setTimeout(() => {
       messageField.focus({ preventScroll: true });
       messageField.setSelectionRange(messageField.value.length, messageField.value.length);
@@ -569,13 +573,18 @@ function growMessage() {
 messageField.addEventListener("input", growMessage);
 let briefingText = "";
 let senderName = "";
-const isValidContact = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || value.replace(/\D/g, "").length >= 10;
+// E-mail completo, ou telefone só com dígitos/separadores e 10 a 15 dígitos (limite E.164, aceita DDI).
+const isValidContact = (value) =>
+  value.includes("@")
+    ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+    : /^\+?[\d\s().-]+$/.test(value) && /^\d{10,15}$/.test(value.replace(/\D/g, ""));
 briefingForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const nameInput = $("#name");
   const contactInput = $("#contact");
   nameInput.setCustomValidity(nameInput.value.trim().length < 2 ? "Informe um nome com pelo menos 2 caracteres." : "");
   contactInput.setCustomValidity(isValidContact(contactInput.value.trim()) ? "" : "Informe um e-mail válido ou um WhatsApp com DDD.");
+  messageField.setCustomValidity(messageField.value.trim().length < messageField.minLength ? `Descreva sua ideia com pelo menos ${messageField.minLength} caracteres.` : "");
   if (!briefingForm.reportValidity()) return;
   const data = new FormData(briefingForm);
   const contact = String(data.get("contact")).trim();
@@ -596,7 +605,10 @@ briefingForm.addEventListener("submit", (event) => {
   $("#briefing-status").textContent = "";
   openDialog($("#briefing-dialog"));
 });
-["name", "contact"].forEach((id) =>
+// O envio só fica disponível com o tratamento local ativo; sem ele, nada sai na URL.
+$("#briefing-submit").disabled = false;
+$("#form-status").textContent = "";
+["name", "contact", "message"].forEach((id) =>
   $(`#${id}`).addEventListener("input", (event) => event.target.setCustomValidity("")),
 );
 $("#copy-briefing").addEventListener("click", async () => {
@@ -746,10 +758,55 @@ if (finePointer) {
   }, () => { stage.style.removeProperty("--tilt-x"); stage.style.removeProperty("--tilt-y"); });
 }
 
+/* Efeitos do hero param fora da tela, com aba oculta ou com movimento reduzido. */
+const hero = $(".hero");
+let heroVisible = true;
+const motionSyncs = [];
+const syncHeroMotion = () => {
+  hero.classList.toggle("is-paused", !heroVisible || document.hidden);
+  motionSyncs.forEach((sync) => sync());
+};
+if ("IntersectionObserver" in window) {
+  new IntersectionObserver(([entry]) => {
+    heroVisible = entry.isIntersecting;
+    syncHeroMotion();
+  }).observe(hero);
+}
+document.addEventListener("visibilitychange", syncHeroMotion);
+reducedMotion.addEventListener?.("change", syncHeroMotion);
+
 /* Sensor opcional: só começa após ação explícita e nunca pede permissão sozinho. */
 if ("DeviceOrientationEvent" in window && window.matchMedia("(pointer:coarse)").matches && !reducedMotion.matches) {
   const enableMotion = $("#tb-motion-enable");
   const motionStage = $(".tb-hero-stage");
+  let enabled = false, listening = false, scheduled = false, beta = 0, gamma = 0;
+  const onOrientation = (event) => {
+    if (!Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
+    beta = Math.max(-8, Math.min(8, event.beta / 8));
+    gamma = Math.max(-8, Math.min(8, event.gamma / 5));
+    if (!scheduled) {
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        if (!listening) return;
+        motionStage.style.setProperty("--tilt-x", beta.toFixed(1) + "deg");
+        motionStage.style.setProperty("--tilt-y", gamma.toFixed(1) + "deg");
+      });
+    }
+  };
+  // Um único listener, ligado só com sensor autorizado, hero visível e movimento permitido.
+  motionSyncs.push(() => {
+    const on = enabled && heroVisible && !document.hidden && !reducedMotion.matches;
+    if (on === listening) return;
+    listening = on;
+    if (on) {
+      window.addEventListener("deviceorientation", onOrientation, {passive:true});
+    } else {
+      window.removeEventListener("deviceorientation", onOrientation, {passive:true});
+      motionStage.style.removeProperty("--tilt-x");
+      motionStage.style.removeProperty("--tilt-y");
+    }
+  });
   enableMotion.hidden = false;
   enableMotion.addEventListener("click", async () => {
     try {
@@ -757,21 +814,8 @@ if ("DeviceOrientationEvent" in window && window.matchMedia("(pointer:coarse)").
         const permission = await DeviceOrientationEvent.requestPermission();
         if (permission !== "granted") { enableMotion.textContent = "Movimento indisponível"; return; }
       }
-      let scheduled = false, beta = 0, gamma = 0;
-      const onOrientation = (event) => {
-        if (!Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
-        beta = Math.max(-8, Math.min(8, event.beta / 8));
-        gamma = Math.max(-8, Math.min(8, event.gamma / 5));
-        if (!scheduled) {
-          scheduled = true;
-          requestAnimationFrame(() => {
-            motionStage.style.setProperty("--tilt-x", beta.toFixed(1) + "deg");
-            motionStage.style.setProperty("--tilt-y", gamma.toFixed(1) + "deg");
-            scheduled = false;
-          });
-        }
-      };
-      window.addEventListener("deviceorientation", onOrientation, {passive:true});
+      enabled = true;
+      syncHeroMotion();
       enableMotion.hidden = true;
     } catch (_) {
       enableMotion.textContent = "Movimento indisponível";
